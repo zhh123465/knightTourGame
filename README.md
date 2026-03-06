@@ -1,6 +1,6 @@
 # 马踏棋盘游戏 (Knight's Tour Game)
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/your-username/knight-tour-game)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/zhh123465/knightTourGame)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## 项目简介
@@ -34,26 +34,40 @@
 ### 构建项目
 
 ```bash
-git clone https://github.com/your-username/knight-tour-game.git
+git clone https://github.com/zhh123465/knightTourGame.git
 cd knight-tour-game
 mvn clean package
 ```
 
 ### 运行应用
 
-**方式 1: 使用 Maven 插件运行**
+**方式 1: 使用 Windows 安装程序 (推荐)**
+
+1.  下载最新版本的安装包: [Releases](https://github.com/zhh123465/knightTourGame/releases)
+2.  下载 `KnightTourGame_Setup_x.x.x.exe`。
+3.  双击运行安装程序，按照向导完成安装。
+4.  安装完成后，可通过桌面快捷方式或开始菜单启动游戏。
+    *   **注意**: 此方式无需预先安装 Java 环境，程序已内置运行时。
+
+**方式 2: 使用免安装绿色版**
+
+1.  在 [Releases](https://github.com/zhh123465/knightTourGame/releases) 页面下载 `KnightTourGame-Windows.zip`。
+2.  解压 ZIP 文件到任意目录。
+3.  进入解压后的文件夹，双击 `KnightTourGame.exe` 即可运行。
+
+**方式 3: 使用 Maven 插件运行 (开发者)**
 
 ```bash
 mvn javafx:run
 ```
 
-**方式 2: 运行打包后的 JAR**
+**方式 4: 运行打包后的 JAR**
 
 ```bash
 java -jar target/knight-tour-game-1.0.0.jar
 ```
 
-*注意: 确保您的环境已正确配置 JavaFX 运行时，或者使用包含 JavaFX 的 JDK。*
+*注意: 方式 3 和 4 需要您的环境已正确配置 JavaFX 运行时，或者使用包含 JavaFX 的 JDK。*
 
 ## 使用说明
 
