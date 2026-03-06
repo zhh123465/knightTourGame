@@ -1,0 +1,31 @@
+# 安装说明 (Installation Guide)
+
+## 1. 免安装运行 (Portable)
+
+如果您希望直接运行而不安装：
+1. 解压 `KnightTourGame-Windows.zip`。
+2. 双击文件夹内的 `KnightTourGame.exe` 即可运行。
+
+## 2. 生成安装包 (Installer)
+
+本程序支持生成标准的 Windows 安装包 (.exe)，但需要依赖 **Inno Setup** 工具。
+
+### 步骤：
+1. **下载并安装 Inno Setup**
+   - 访问官网下载：https://jrsoftware.org/isdl.php
+   - 安装最新版本的 Inno Setup Compiler。
+
+2. **生成安装脚本**
+   - 运行项目根目录下的 `generate_installer_script.bat`。
+   - 这将在 `target\installer` 目录下生成 `setup.iss` 脚本文件。
+
+3. **编译安装包**
+   - 双击打开 `target\installer\setup.iss`。
+   - 在 Inno Setup 编辑器中，点击工具栏上的 **Build -> Compile** (或按 F9)。
+   - 编译完成后，将在 `target\installer` 目录下生成名为 `KnightTourGame_Setup_1.0.0.exe` 的安装包。
+
+### 安装包特性：
+- 包含完整的运行时环境 (JRE)，无需用户安装 Java。
+- 支持开始菜单快捷方式。
+- 支持桌面快捷方式。
+- 包含标准的卸载程序。
