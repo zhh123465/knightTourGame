@@ -15,8 +15,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <javafx.version>11.0.2</javafx.version>
         <junit.version>5.9.0</junit.version>
         <jqwik.version>1.7.0</jqwik.version>
@@ -96,8 +96,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
 
@@ -118,6 +118,11 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.knighttour.Main</mainClass>
+                    <jlinkImageName>knight-tour-game</jlinkImageName>
+                    <launcher>knight-tour</launcher>
+                    <compress>2</compress>
+                    <noManPages>true</noManPages>
+                    <noHeaderFiles>true</noHeaderFiles>
                 </configuration>
             </plugin>
             
