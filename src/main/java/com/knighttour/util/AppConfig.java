@@ -12,7 +12,7 @@ public class AppConfig implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private int animationDelayMs = 100;
-    private ColorScheme colorScheme = ColorScheme.DEFAULT;
+    private String themeName = "CLASSIC";
     private boolean enableSound = false;
     private String logLevel = "INFO";
     
@@ -34,12 +34,12 @@ public class AppConfig implements Serializable {
         this.animationDelayMs = Math.max(0, Math.min(1000, animationDelayMs));
     }
     
-    public ColorScheme getColorScheme() {
-        return colorScheme;
+    public String getThemeName() {
+        return themeName;
     }
     
-    public void setColorScheme(ColorScheme colorScheme) {
-        this.colorScheme = colorScheme;
+    public void setThemeName(String themeName) {
+        this.themeName = themeName;
     }
     
     public boolean isEnableSound() {
@@ -62,7 +62,7 @@ public class AppConfig implements Serializable {
     public String toString() {
         return "AppConfig{" +
                 "animationDelayMs=" + animationDelayMs +
-                ", colorScheme=" + colorScheme +
+                ", themeName=" + themeName +
                 ", enableSound=" + enableSound +
                 ", logLevel='" + logLevel + '\'' +
                 '}';

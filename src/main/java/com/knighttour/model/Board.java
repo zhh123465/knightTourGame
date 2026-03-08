@@ -30,6 +30,22 @@ public class Board {
     }
     
     /**
+     * 复制构造函数
+     * 
+     * @param other 要复制的棋盘
+     */
+    public Board(Board other) {
+        cells = new Cell[SIZE][SIZE];
+        visitedCount = other.visitedCount;
+        
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                cells[row][col] = new Cell(other.cells[row][col]);
+            }
+        }
+    }
+    
+    /**
      * 初始化棋盘
      * 创建8×8的方格数组，所有方格初始为未访问状态
      */

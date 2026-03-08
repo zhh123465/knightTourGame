@@ -1,11 +1,11 @@
 package com.knighttour.view;
 
 import com.knighttour.util.AppConfig;
-import com.knighttour.util.ColorScheme;
+import com.knighttour.util.Theme;
+import com.knighttour.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
 /**
@@ -17,7 +17,7 @@ public class SettingsDialog extends Dialog<AppConfig> {
 
     private Slider speedSlider;
     private CheckBox soundCheckBox;
-    private ComboBox<String> colorSchemeCombo;
+    private ComboBox<Theme> themeComboBox;
 
     public SettingsDialog(AppConfig currentConfig) {
         this.setTitle("设置");
@@ -48,13 +48,32 @@ public class SettingsDialog extends Dialog<AppConfig> {
         grid.add(new Label("音效:"), 0, 1);
         grid.add(soundCheckBox, 1, 1);
 
-        // Color Scheme
-        colorSchemeCombo = new ComboBox<>();
-        colorSchemeCombo.getItems().addAll("默认", "高对比度");
-        colorSchemeCombo.setValue("默认"); // Default for now as we don't have logic to identify current scheme by name easily
+        // Theme
+        themeComboBox = new ComboBox<>();
+        themeComboBox.getItems().addAll(Theme.values());
+        try {
+            themeComboBox.setValue(Theme.valueOf(currentConfig.getThemeName()));
+        } catch (IllegalArgumentException e) {
+            themeComboBox.setValue(Theme.CLASSIC);
+        }
         
-        grid.add(new Label("颜色方案:"), 0, 2);
-        grid.add(colorSchemeCombo, 1, 2);
+        // Custom cell factory for Theme display
+        Callback<ListView<Theme>, ListCell<Theme>> cellFactory = param -> new ListCell<Theme>() {
+            @Override
+            protected void updateItem(Theme item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getDisplayName());
+                }
+            }
+        };
+        themeComboBox.setCellFactory(cellFactory);
+        themeComboBox.setButtonCell(cellFactory.call(null));
+        
+        grid.add(new Label("主题:"), 0, 2);
+        grid.add(themeComboBox, 1, 2);
 
         this.getDialogPane().setContent(grid);
 
@@ -64,16 +83,7 @@ public class SettingsDialog extends Dialog<AppConfig> {
                 AppConfig newConfig = new AppConfig();
                 newConfig.setAnimationDelayMs((int) speedSlider.getValue());
                 newConfig.setEnableSound(soundCheckBox.isSelected());
-                
-                // Handle color scheme selection
-                if ("高对比度".equals(colorSchemeCombo.getValue())) {
-                    newConfig.setColorScheme(new ColorScheme(
-                        Color.BLACK, Color.WHITE, Color.YELLOW, Color.RED
-                    ));
-                } else {
-                    newConfig.setColorScheme(ColorScheme.DEFAULT);
-                }
-                
+                newConfig.setThemeName(themeComboBox.getValue().name());
                 return newConfig;
             }
             return null;

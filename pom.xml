@@ -107,7 +107,14 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
-                    <argLine>-Dnet.bytebuddy.experimental=true</argLine>
+                    <argLine>
+                        -Dnet.bytebuddy.experimental=true
+                        --add-opens com.knighttour/com.knighttour.model=ALL-UNNAMED
+                        --add-opens com.knighttour/com.knighttour.util=ALL-UNNAMED
+                        --add-opens com.knighttour/com.knighttour.algorithm=ALL-UNNAMED
+                        --add-opens com.knighttour/com.knighttour.controller=ALL-UNNAMED
+                        --add-opens com.knighttour/com.knighttour.view=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
 

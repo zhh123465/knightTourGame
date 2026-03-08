@@ -122,6 +122,23 @@ public class BoardView extends StackPane {
         this.heightProperty().addListener((obs, oldVal, newVal) -> updateLayout());
     }
 
+    public void setCellColor(Position pos, Color color) {
+        if (pos == null) return;
+        Rectangle cell = cellNodes[pos.getRow()][pos.getCol()];
+        cell.setFill(color);
+    }
+    
+    public void highlightCell(Position pos) {
+        if (pos == null) return;
+        Rectangle cell = cellNodes[pos.getRow()][pos.getCol()];
+        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(300), cell);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.3);
+        ft.setCycleCount(6);
+        ft.setAutoReverse(true);
+        ft.play();
+    }
+
     private void updateLayout() {
         double w = getWidth();
         double h = getHeight();
@@ -177,16 +194,10 @@ public class BoardView extends StackPane {
             cellNodes[row][col].setFill(defaultColor);
         }
     }
-
-    public void setCellColor(Position pos, Color color) {
+    
+    public void markInvalidCell(Position pos) {
         if (isValidPosition(pos)) {
-            cellNodes[pos.getRow()][pos.getCol()].setFill(color);
-        }
-    }
-
-    public void highlightCell(Position pos) {
-        if (isValidPosition(pos)) {
-            cellNodes[pos.getRow()][pos.getCol()].setFill(ThemeManager.getInstance().getCurrentTheme().getHighlightColor());
+            cellNodes[pos.getRow()][pos.getCol()].setFill(Color.rgb(255, 0, 0, 0.3));
         }
     }
 

@@ -88,8 +88,8 @@ public class ConfigManager {
         String logLevel = props.getProperty("log.level", "INFO");
         config.setLogLevel(logLevel);
         
-        // ColorScheme parsing is complex, skipping for now or using default
-        // In a real app, we would parse color codes
+        String themeName = props.getProperty("theme.name", "CLASSIC");
+        config.setThemeName(themeName);
         
         return config;
     }
@@ -99,7 +99,7 @@ public class ConfigManager {
         props.setProperty("animation.delay", String.valueOf(config.getAnimationDelayMs()));
         props.setProperty("sound.enable", String.valueOf(config.isEnableSound()));
         props.setProperty("log.level", config.getLogLevel());
-        // Add colors
+        props.setProperty("theme.name", config.getThemeName());
         return props;
     }
 }

@@ -28,6 +28,18 @@ public class Cell {
     }
     
     /**
+     * 复制构造函数
+     * 
+     * @param other 要复制的方格
+     */
+    public Cell(Cell other) {
+        this.row = other.row;
+        this.col = other.col;
+        this.visited = other.visited;
+        this.sequence = other.sequence;
+    }
+    
+    /**
      * 获取行坐标
      * 
      * @return 行坐标

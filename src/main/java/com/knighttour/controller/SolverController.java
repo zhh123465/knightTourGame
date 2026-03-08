@@ -8,6 +8,7 @@ import com.knighttour.model.Board;
 import com.knighttour.model.Move;
 import com.knighttour.model.Position;
 import com.knighttour.model.Solution;
+import com.knighttour.util.ThemeManager;
 import com.knighttour.view.BoardView;
 import com.knighttour.view.KnightAnimator;
 import com.knighttour.view.StatisticsPanel;
@@ -34,6 +35,11 @@ public class SolverController implements SolverListener {
     private final KnightAnimator animator;
     private final ExecutorService solverExecutor;
     
+    // Timer for real-time statistics
+    private javafx.animation.AnimationTimer timer;
+    private long startTime;
+    private long accumulatedTime = 0;
+    
     // 监听器
     private java.util.function.Consumer<Solution> onSolutionFoundHandler;
     private Runnable onNoSolutionFoundHandler;
@@ -55,6 +61,16 @@ public class SolverController implements SolverListener {
                 return t;
             }
         });
+        
+        // Initialize timer
+        this.timer = new javafx.animation.AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                long current = System.currentTimeMillis();
+                long elapsed = accumulatedTime + (current - startTime);
+                statisticsPanel.updateTime(elapsed);
+            }
+        };
     }
     
     /**
@@ -79,7 +95,12 @@ public class SolverController implements SolverListener {
         // 放置其实位置的骑士（虽然 solve 方法也会标记，但视觉上先放置更好）
         boardView.placeKnight(startPos);
         boardView.updateCellSequence(startPos, 1);
-        boardView.setCellColor(startPos, com.knighttour.util.ColorScheme.DEFAULT.getCurrentColor());
+        boardView.setCellColor(startPos, ThemeManager.getInstance().getCurrentTheme().getHighlightColor());
+        
+        // Start timer
+        accumulatedTime = 0;
+        startTime = System.currentTimeMillis();
+        timer.start();
         
         // 异步执行求解
         solverExecutor.submit(() -> {
@@ -98,20 +119,29 @@ public class SolverController implements SolverListener {
      * 暂停求解
      */
     public void pause() {
-        solver.pause();
+        if (solver.getState() == SolverState.SOLVING) {
+            timer.stop();
+            accumulatedTime += System.currentTimeMillis() - startTime;
+            solver.pause();
+        }
     }
     
     /**
      * 恢复求解
      */
     public void resume() {
-        solver.resume();
+        if (solver.getState() == SolverState.PAUSED) {
+            startTime = System.currentTimeMillis();
+            timer.start();
+            solver.resume();
+        }
     }
     
     /**
      * 停止求解
      */
     public void stop() {
+        timer.stop();
         solver.stop();
     }
     
@@ -174,9 +204,9 @@ public class SolverController implements SolverListener {
             // 更新目标位置的状态
             boardView.updateCellSequence(move.getTo(), move.getSequence());
             // 将前一个位置设为已访问颜色
-            boardView.setCellColor(move.getFrom(), com.knighttour.util.ColorScheme.DEFAULT.getVisitedColor());
+            boardView.setCellColor(move.getFrom(), ThemeManager.getInstance().getCurrentTheme().getVisitedColor());
             // 将当前位置设为当前颜色
-            boardView.setCellColor(move.getTo(), com.knighttour.util.ColorScheme.DEFAULT.getCurrentColor());
+            boardView.setCellColor(move.getTo(), ThemeManager.getInstance().getCurrentTheme().getHighlightColor());
         });
     }
 
@@ -195,13 +225,17 @@ public class SolverController implements SolverListener {
             // 清除死胡同位置的标记
             boardView.clearCellSequence(move.getTo());
             // 恢复当前位置为当前颜色
-            boardView.setCellColor(move.getFrom(), com.knighttour.util.ColorScheme.DEFAULT.getCurrentColor());
+            boardView.setCellColor(move.getFrom(), ThemeManager.getInstance().getCurrentTheme().getHighlightColor());
         });
     }
 
     @Override
     public void onSolutionFound(Solution solution) {
         Platform.runLater(() -> {
+            timer.stop();
+            // Update final time from solution or just stop timer
+            statisticsPanel.updateTime(solution.getSolvingTimeMs());
+            
             logger.info("Solution found!");
             if (onSolutionFoundHandler != null) {
                 onSolutionFoundHandler.accept(solution);
@@ -212,6 +246,7 @@ public class SolverController implements SolverListener {
     @Override
     public void onNoSolutionFound() {
         Platform.runLater(() -> {
+            timer.stop();
             logger.info("No solution found.");
             if (onNoSolutionFoundHandler != null) {
                 onNoSolutionFoundHandler.run();

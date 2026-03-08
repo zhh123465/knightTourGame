@@ -91,24 +91,51 @@ public class KnightTourSolver {
      * @return 解决方案，如果无解返回 null
      */
     public Solution solve(Position startPos) {
-        logger.info("Starting solver from position {}", startPos);
+        return solve(startPos, true);
+    }
+
+    /**
+     * 从指定位置开始求解
+     * 
+     * @param startPos 起始位置
+     * @param resetBoard 是否重置棋盘（true为从头开始，false为从当前状态继续）
+     * @return 解决方案，如果无解返回 null
+     */
+    public Solution solve(Position startPos, boolean resetBoard) {
+        logger.info("Starting solver from position {}, reset={}", startPos, resetBoard);
         
         // 初始化
-        board.reset();
-        moveStack.clear();
-        executionStack.clear();
+        if (resetBoard) {
+            board.reset();
+            moveStack.clear();
+            executionStack.clear();
+            board.markVisited(startPos.getRow(), startPos.getCol(), 1);
+        } else {
+            // 如果不重置，保留棋盘状态，但需要清空栈（重新构建搜索路径）
+            // 注意：moveStack 应该包含之前的路径吗？如果不包含，生成的 Solution 路径可能不完整。
+            // 这是一个复杂点。如果只是为了演示后续步骤，可以不包含之前的路径，或者假定之前的路径已经固定。
+            // 为了简化，我们假设从当前状态开始，之前的状态不可回溯（已经固定）。
+            moveStack.clear();
+            executionStack.clear();
+            // 注意：startPos 应该已经是 visited 状态，或者它是下一步要走的？
+            // 通常 solve 调用时，startPos 是当前骑士所在位置（已访问）。
+            // 我们需要寻找 *下一步*。
+            // 但是下面的逻辑是：push initialEntry -> loop -> peek -> hasUntriedMoves -> nextPos
+            // initialEntry 的 possibleMoves 是从 startPos 出发的。
+            // 所以 startPos 必须是已访问的。
+        }
         
         long startTime = System.currentTimeMillis();
         int totalMoves = 0;
         int backtrackCount = 0;
         
-        // 标记起始位置
-        board.markVisited(startPos.getRow(), startPos.getCol(), 1);
+        // 确定当前序号
+        int currentSequence = resetBoard ? 1 : board.getCell(startPos.getRow(), startPos.getCol()).getSequence();
         
         // 获取初始移动并压栈
         // 使用配置的算法获取下一步移动
         List<Position> initialMoves = algorithm.findNextMoves(board, startPos);
-        MoveStackEntry initialEntry = new MoveStackEntry(startPos, 1, initialMoves);
+        MoveStackEntry initialEntry = new MoveStackEntry(startPos, currentSequence, initialMoves);
         executionStack.push(initialEntry);
         
         state = SolverState.SOLVING;
@@ -143,7 +170,7 @@ public class KnightTourSolver {
                 }
                 
                 // 检查是否找到解
-                if (executionStack.size() == 64) {
+                if (board.getVisitedCount() == 64) {
                     logger.info("Solution found!");
                     state = SolverState.SOLUTION_FOUND;
                     if (listener != null) listener.onStateChanged(state);
@@ -167,7 +194,7 @@ public class KnightTourSolver {
                 if (currentEntry.hasUntriedMoves()) {
                     // 前进逻辑
                     Position nextPos = currentEntry.getNextUntriedMove();
-                    int nextSequence = executionStack.size() + 1;
+                    int nextSequence = currentEntry.getSequence() + 1;
                     totalMoves++;
                     
                     // 记录移动到 moveStack (为了路径记录)
@@ -192,7 +219,7 @@ public class KnightTourSolver {
                     // 通知监听器
                     if (listener != null) {
                         listener.onMoveExecuted(move);
-                        listener.onProgress(executionStack.size(), backtrackCount);
+                        listener.onProgress(board.getVisitedCount(), backtrackCount);
                     }
                     
                     // 动画延迟
@@ -221,7 +248,7 @@ public class KnightTourSolver {
                             
                             if (listener != null) {
                                 listener.onBacktrack(lastMove);
-                                listener.onProgress(executionStack.size(), backtrackCount);
+                                listener.onProgress(board.getVisitedCount(), backtrackCount);
                             }
                         }
                         
