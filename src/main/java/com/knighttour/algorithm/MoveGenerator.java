@@ -50,6 +50,10 @@ public class MoveGenerator {
         logger.debug("MoveGenerator created");
     }
     
+    public Board getBoard() {
+        return board;
+    }
+    
     /**
      * 获取从指定位置出发的所有有效移动
      * 

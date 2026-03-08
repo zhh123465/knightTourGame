@@ -23,7 +23,7 @@ public class KnightTourSolver {
     
     private final Board board;
     private final MoveStack moveStack;
-    private final MoveGenerator moveGenerator;
+    private KnightTourAlgorithm algorithm;
     private final Stack<MoveStackEntry> executionStack;
     
     private SolverState state;
@@ -44,9 +44,17 @@ public class KnightTourSolver {
         }
         this.board = board;
         this.moveStack = new MoveStack();
-        this.moveGenerator = new MoveGenerator(board);
+        // 默认为 Warnsdorff 算法
+        this.algorithm = new WarnsdorffAlgorithm();
         this.executionStack = new Stack<>();
         this.state = SolverState.IDLE;
+    }
+    
+    public void setAlgorithm(KnightTourAlgorithm algorithm) {
+        if (state == SolverState.SOLVING || state == SolverState.PAUSED) {
+            throw new IllegalStateException("Cannot change algorithm while solving");
+        }
+        this.algorithm = algorithm;
     }
     
     /**
@@ -98,8 +106,8 @@ public class KnightTourSolver {
         board.markVisited(startPos.getRow(), startPos.getCol(), 1);
         
         // 获取初始移动并压栈
-        // 使用启发式算法优化
-        List<Position> initialMoves = moveGenerator.getValidMovesWithHeuristic(startPos);
+        // 使用配置的算法获取下一步移动
+        List<Position> initialMoves = algorithm.findNextMoves(board, startPos);
         MoveStackEntry initialEntry = new MoveStackEntry(startPos, 1, initialMoves);
         executionStack.push(initialEntry);
         
@@ -174,7 +182,7 @@ public class KnightTourSolver {
                     board.markVisited(nextPos.getRow(), nextPos.getCol(), nextSequence);
                     
                     // 压入新 Entry
-                    List<Position> nextMoves = moveGenerator.getValidMovesWithHeuristic(nextPos);
+                    List<Position> nextMoves = algorithm.findNextMoves(board, nextPos);
                     MoveStackEntry nextEntry = new MoveStackEntry(nextPos, nextSequence, nextMoves);
                     executionStack.push(nextEntry);
                     
