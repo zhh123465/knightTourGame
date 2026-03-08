@@ -130,12 +130,26 @@ public class BoardView extends StackPane {
     
     public void highlightCell(Position pos) {
         if (pos == null) return;
-        Rectangle cell = cellNodes[pos.getRow()][pos.getCol()];
-        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(300), cell);
-        ft.setFromValue(1.0);
-        ft.setToValue(0.3);
-        ft.setCycleCount(6);
+        
+        // 使用叠加层实现深紫色闪烁
+        StackPane pane = cellPanes[pos.getRow()][pos.getCol()];
+        Rectangle highlightRect = new Rectangle();
+        highlightRect.setFill(Color.web("#800080")); // 深紫色
+        highlightRect.setOpacity(0.0);
+        highlightRect.setMouseTransparent(true); // 确保不阻挡点击
+        
+        // 绑定大小
+        highlightRect.widthProperty().bind(pane.widthProperty());
+        highlightRect.heightProperty().bind(pane.heightProperty());
+        
+        pane.getChildren().add(highlightRect); // 添加到最上层
+        
+        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(200), highlightRect);
+        ft.setFromValue(0.0);
+        ft.setToValue(0.8);
+        ft.setCycleCount(6); // 3次闪烁 (亮-暗-亮-暗-亮-暗)
         ft.setAutoReverse(true);
+        ft.setOnFinished(e -> pane.getChildren().remove(highlightRect));
         ft.play();
     }
 
@@ -195,9 +209,67 @@ public class BoardView extends StackPane {
         }
     }
     
+    public void flashRedX(Position pos) {
+        if (pos == null) return;
+        
+        StackPane pane = cellPanes[pos.getRow()][pos.getCol()];
+        Text xMark = new Text("X");
+        xMark.setFill(Color.RED);
+        xMark.setFont(Font.font("Arial", javafx.scene.text.FontWeight.BOLD, 40));
+        xMark.setMouseTransparent(true);
+        xMark.setOpacity(0.0);
+        
+        pane.getChildren().add(xMark);
+        
+        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(200), xMark);
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+        ft.setCycleCount(6);
+        ft.setAutoReverse(true);
+        ft.setOnFinished(e -> pane.getChildren().remove(xMark));
+        ft.play();
+    }
+
     public void markInvalidCell(Position pos) {
         if (isValidPosition(pos)) {
-            cellNodes[pos.getRow()][pos.getCol()].setFill(Color.rgb(255, 0, 0, 0.3));
+            // 叠加红色半透明层
+            StackPane pane = cellPanes[pos.getRow()][pos.getCol()];
+            
+            // 检查是否已经标记过，避免重复叠加
+            boolean alreadyMarked = pane.getChildren().stream()
+                .filter(node -> node instanceof Rectangle)
+                .map(node -> (Rectangle)node)
+                .anyMatch(rect -> Color.rgb(255, 0, 0, 0.3).equals(rect.getFill()));
+                
+            if (alreadyMarked) return;
+
+            Rectangle invalidRect = new Rectangle();
+            invalidRect.setFill(Color.rgb(255, 0, 0, 0.3));
+            invalidRect.setMouseTransparent(true);
+            invalidRect.widthProperty().bind(pane.widthProperty());
+            invalidRect.heightProperty().bind(pane.heightProperty());
+            
+            pane.getChildren().add(invalidRect);
+        }
+    }
+    
+    public void clearOverlays() {
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                StackPane pane = cellPanes[row][col];
+                
+                // Lambda required final variables
+                final int r = row;
+                final int c = col;
+                
+                // 移除所有临时的叠加层
+                pane.getChildren().removeIf(node -> {
+                    if (node == cellNodes[r][c]) return false;
+                    if (node == sequenceLabels[r][c]) return false;
+                    if (node == knightNode) return false;
+                    return true;
+                });
+            }
         }
     }
 

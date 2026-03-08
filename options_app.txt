@@ -1,0 +1,7 @@
+--type app-image
+--name KnightTourGame
+--input target
+--main-jar knight-tour-game-1.0.0.jar
+--main-class com.knighttour.Launcher
+--dest dist/app
+--java-options "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED --add-opens=javafx.base/javafx.util=ALL-UNNAMED"

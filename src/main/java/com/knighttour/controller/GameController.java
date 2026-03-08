@@ -41,6 +41,13 @@ public class GameController {
     private Solution lastSolution;
     private boolean isManualMode = false;
     private Position currentManualPos = null;
+    private final java.util.List<Position> moveHistory = new java.util.ArrayList<>();
+    private final java.util.Set<java.util.List<Position>> invalidPaths = new java.util.HashSet<>();
+    private final java.util.concurrent.ExecutorService validationExecutor = java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "Validation-Thread");
+        t.setDaemon(true);
+        return t;
+    });
     
     public GameController(MainWindow mainWindow, SolverController solverController, Board board, ConfigManager configManager, EventDispatcher eventDispatcher) {
         this.mainWindow = mainWindow;
@@ -223,9 +230,9 @@ public class GameController {
                         mainWindow.showSuccessDialog("恭喜！手动完成了骑士巡游！");
                     }
                 } else {
-                    // Invalid path
-                    mainWindow.showErrorDialog("当前路径无解！\n系统已自动阻止该移动。");
-                    // TODO: Mark invalid path visually
+                    updateInvalidOverlays();
+                    mainWindow.getBoardView().flashRedX(nextPos);
+                    mainWindow.showErrorDialog("走该位置将到不了终点");
                 }
             });
         }).start();
@@ -280,6 +287,14 @@ public class GameController {
         solverController.stop();
         mainWindow.getBoardView().resetBoard();
         mainWindow.getStatisticsPanel().reset();
+        
+        // Reset manual state
+        currentManualPos = null;
+        moveHistory.clear();
+        invalidPaths.clear();
+        mainWindow.getBoardView().clearOverlays();
+        board.reset(); // Ensure model is also reset
+        
         updateControlsState();
     }
     
@@ -345,6 +360,29 @@ public class GameController {
         });
     }
     
+    private void updateInvalidOverlays() {
+        mainWindow.getBoardView().clearOverlays();
+        if (currentManualPos == null) return;
+        
+        int[] rowMoves = {2, 1, -1, -2, -2, -1, 1, 2};
+        int[] colMoves = {1, 2, 2, 1, -1, -2, -2, -1};
+        
+        for (int i = 0; i < 8; i++) {
+            int nextRow = currentManualPos.getRow() + rowMoves[i];
+            int nextCol = currentManualPos.getCol() + colMoves[i];
+            
+            if (board.isValidPosition(nextRow, nextCol) && !board.isVisited(nextRow, nextCol)) {
+                 Position neighbor = new Position(nextRow, nextCol);
+                 java.util.List<Position> testPath = new java.util.ArrayList<>(moveHistory);
+                 testPath.add(neighbor);
+                 
+                 if (invalidPaths.contains(testPath)) {
+                     mainWindow.getBoardView().markInvalidCell(neighbor);
+                 }
+            }
+        }
+    }
+
     /**
      * 退出应用
      */

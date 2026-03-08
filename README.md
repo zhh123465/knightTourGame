@@ -1,109 +1,102 @@
-# 马踏棋盘游戏 (Knight's Tour Game)
+# Knight Tour Game (马踏棋盘游戏)
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/zhh123465/knightTourGame)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-11%2B-orange)](https://www.oracle.com/java/)
+[![JavaFX](https://img.shields.io/badge/JavaFX-11%2B-blue)](https://openjfx.io/)
 
-## 项目简介
+一个基于 JavaFX 开发的马踏棋盘（骑士巡游）算法可视化演示程序。本项目旨在通过直观的动画演示，帮助用户理解回溯算法（Backtracking）和 Warnsdorff 启发式算法在解决路径搜索问题中的应用。
 
-**马踏棋盘游戏** 是一个基于 JavaFX 的桌面应用程序，旨在演示经典的“骑士周游问题”（Knight's Tour Problem）的求解过程。该项目不仅是一个游戏，更是一个用于教学和演示回溯算法（Backtracking Algorithm）及其优化策略（Warnsdorff 规则）的工具。
+## ✨ 功能特性
 
-### 主要功能
+### 核心功能
+*   **算法演示**：支持深度优先搜索（DFS）和 Warnsdorff 启发式算法，实时展示骑士的移动路径和回溯过程。
+*   **多线程求解**：后台线程执行计算，确保界面流畅不卡顿。
+*   **实时控制**：支持开始、暂停、恢复、单步执行和重置操作。
+*   **自定义起点**：用户可输入任意合法的起始坐标（0-7, 0-7）。
+*   **速度调节**：支持 0-1000ms 的动画延迟调节。
 
-*   **可视化求解**: 实时展示骑士在 8x8 棋盘上的移动路径和回溯过程。
-*   **交互控制**: 支持开始、暂停、重置和单步执行操作。
-*   **任意起始点**: 用户可以指定棋盘上任意位置作为起始点。
-*   **性能优异**: 采用 Warnsdorff 启发式算法，能在毫秒级内找到解。
-*   **统计信息**: 实时显示已访问格数、总步数、回溯次数和耗时。
-*   **导出功能**: 支持将找到的解矩阵导出为文本文件。
-*   **自定义设置**: 可调整动画速度、颜色方案等。
+### 增强功能 (v1.0.0 新增)
+*   **🎨 多主题切换**：内置 8 种配色方案（经典、深色、木纹、薄荷绿、雾霾蓝、暖米白、樱花粉、浅灰），满足不同审美需求。
+*   **⏱️ 实时计时**：精确到毫秒的求解耗时统计，直观展示算法效率。
+*   **🎮 手动挑战模式**：
+    *   **自由探索**：切换至手动模式，尝试自己解开谜题。
+    *   **智能验证**：系统实时检测您的每一步是否会导致死局（无解），并及时阻断错误移动。
+    *   **智能提示**：遇到困难时，点击“提示”获取最优下一步（闪烁指引）。
+    *   **自动补全**：随时点击“自动求解”，让算法接管剩余路径。
+    *   **无效路径标记**：自动标记已知会导致无解的“死胡同”入口，辅助决策。
 
-## 技术栈
+## 📸 运行截图
 
-*   **编程语言**: Java 11+
-*   **GUI 框架**: JavaFX 11
-*   **构建工具**: Maven
-*   **测试框架**: JUnit 5, AssertJ, jqwik (属性测试), Mockito
+*(在此处添加运行截图，例如：主界面、手动模式、主题切换等)*
 
-## 安装与运行
+## 🚀 安装与运行
 
-### 前置条件
+本项目提供两种版本供下载：
 
-*   JDK 11 或更高版本
-*   Maven 3.6+
+### 1. 绿色免安装版 (Portable)
+*   **文件名**：`KnightTourGame-1.0.0.zip` (解压后运行)
+*   **适用场景**：临时使用，不想安装软件，或在无管理员权限的电脑上使用。
+*   **使用方法**：
+    1.  下载压缩包并解压到任意目录。
+    2.  进入解压后的文件夹。
+    3.  双击 `KnightTourGame.exe` 即可启动。
+    4.  **注意**：此版本已内置 Java 运行时环境（JRE），**无需**您电脑上安装 Java。
 
-### 构建项目
+### 2. Windows 安装版 (Installer)
+*   **文件名**：`KnightTourGame-Setup-1.0.0.exe`
+*   **适用场景**：长期使用，希望在开始菜单或桌面创建快捷方式。
+*   **使用方法**：
+    1.  下载安装程序。
+    2.  双击运行，按照提示完成安装。
+    3.  安装过程中可选择创建桌面快捷方式。
+    4.  安装完成后，从桌面或开始菜单启动即可。
 
-```bash
-git clone https://github.com/zhh123465/knightTourGame.git
-cd knight-tour-game
-mvn clean package
-```
+## 💻 系统要求
+*   **操作系统**：Windows 10 / 11 (64位)
+*   **内存**：建议 4GB 及以上
+*   **硬盘空间**：约 100MB
 
-### 运行应用
+## 🛠️ 技术栈
+*   **编程语言**：Java 11+
+*   **UI 框架**：JavaFX 11+
+*   **构建工具**：Apache Maven
+*   **核心算法**：
+    *   Backtracking (DFS)
+    *   Warnsdorff's Rule (Heuristic)
 
-**方式 1: 使用 Windows 安装程序 (推荐)**
+## 📖 操作指南
 
-1.  下载最新版本的安装包: [Releases](https://github.com/zhh123465/knightTourGame/releases)
-2.  下载 `KnightTourGame_Setup_x.x.x.exe`。
-3.  双击运行安装程序，按照向导完成安装。
-4.  安装完成后，可通过桌面快捷方式或开始菜单启动游戏。
-    *   **注意**: 此方式无需预先安装 Java 环境，程序已内置运行时。
+### 自动演示模式
+1.  **选择算法**：在左侧下拉框选择“深度优先搜索”或“Warnsdorff算法”。
+2.  **设置起点**：输入起始坐标（例如 `0,0`），或直接点击棋盘格子。
+3.  **开始运行**：点击“开始”按钮。
+4.  **控制过程**：
+    *   **暂停/继续**：随时暂停查看当前状态。
+    *   **单步**：暂停状态下，点击“单步”进行逐帧调试。
+    *   **调速**：拖动下方滑块调整动画速度。
 
-**方式 2: 使用免安装绿色版**
+### 手动挑战模式
+1.  **开启模式**：勾选“手动模式”复选框。
+2.  **开始游戏**：点击棋盘任意位置放置骑士。
+3.  **移动**：点击合法的“日”字步位置（绿色高亮提示）。
+    *   **红色闪烁**：表示该位置会导致死局，系统自动阻止。
+    *   **红色半透明**：表示该位置是已知死胡同的入口。
+4.  **辅助**：
+    *   **提示**：点击“提示”按钮，系统推荐下一步。
+    *   **自动求解**：点击“自动求解”，系统自动完成剩余路径。
 
-1.  在 [Releases](https://github.com/zhh123465/knightTourGame/releases) 页面下载 `KnightTourGame-Windows.zip`。
-2.  解压 ZIP 文件到任意目录。
-3.  进入解压后的文件夹，双击 `KnightTourGame.exe` 即可运行。
+## 🤝 贡献指南
+欢迎提交 Issue 或 Pull Request！
+1.  Fork 本仓库。
+2.  创建您的特性分支 (`git checkout -b feature/AmazingFeature`)。
+3.  提交您的更改 (`git commit -m 'Add some AmazingFeature'`)。
+4.  推送到分支 (`git push origin feature/AmazingFeature`)。
+5.  开启一个 Pull Request。
 
-**方式 3: 使用 Maven 插件运行 (开发者)**
+## 📞 联系方式
+*   **开发者**：zhh123465
+*   **GitHub**：[https://github.com/zhh123465/knightTourGame](https://github.com/zhh123465/knightTourGame)
+*   **Email**：(如有需要请在此处填写)
 
-```bash
-mvn javafx:run
-```
-
-**方式 4: 运行打包后的 JAR**
-
-```bash
-java -jar target/knight-tour-game-1.0.0.jar
-```
-
-*注意: 方式 3 和 4 需要您的环境已正确配置 JavaFX 运行时，或者使用包含 JavaFX 的 JDK。*
-
-## 使用说明
-
-1.  **启动应用**: 运行程序后，将看到主窗口。
-2.  **设置起始点**: 在控制面板左侧输入起始坐标（格式：行,列，例如 `0,0`），或直接点击棋盘上的方格。
-3.  **开始求解**: 点击“开始”按钮，骑士将开始移动。
-4.  **控制过程**:
-    *   **暂停**: 点击“暂停”按钮暂停动画。
-    *   **单步**: 在暂停状态下，点击“单步”按钮执行一步移动。
-    *   **速度**: 拖动下方滑块调整动画速度。
-5.  **重置**: 点击“重置”按钮清空棋盘，准备下一次求解。
-6.  **导出**: 找到解后，可通过菜单栏 `文件 -> 导出解矩阵` 保存结果。
-
-## 算法原理
-
-本项目使用 **深度优先搜索 (DFS)** 结合 **Warnsdorff 启发式规则**。
-
-*   **基本回溯**: 尝试每一个可能的移动，如果走不通则回退。
-*   **Warnsdorff 规则**: 在选择下一步移动时，优先选择那些“后续可行移动数最少”的格子。这种贪心策略极大地减少了回溯次数，使得算法在大多数情况下能线性时间找到解。
-
-## 项目结构
-
-```
-src/main/java/com/knighttour/
-├── algorithm/      # 核心算法实现 (KnightTourSolver, MoveGenerator)
-├── controller/     # 控制器层 (GameController, SolverController)
-├── model/          # 数据模型 (Board, Position, Solution)
-├── util/           # 工具类 (ConfigManager, Validator)
-├── view/           # JavaFX 视图组件 (MainWindow, BoardView)
-└── Main.java       # 应用程序入口
-```
-
-## 贡献
-
-欢迎提交 Issue 或 Pull Request 来改进本项目！
-
-## 许可证
-
-本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
+---
+© 2026 Knight Tour Game Project. All Rights Reserved.
