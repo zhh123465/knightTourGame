@@ -26,7 +26,7 @@ public class KnightTourSolver {
     private KnightTourAlgorithm algorithm;
     private final Stack<MoveStackEntry> executionStack;
     
-    private SolverState state;
+    private volatile SolverState state;
     private SolverListener listener;
     private int animationDelayMs = 0;
     private boolean stepOnce = false;
