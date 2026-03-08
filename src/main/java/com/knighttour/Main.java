@@ -1,6 +1,8 @@
 package com.knighttour;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        // 设置全局异常处理器
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            logger.error("Uncaught exception in thread " + t.getName(), e);
+            Platform.runLater(() -> showErrorDialog("未捕获的异常", e.getMessage()));
+        });
+
         try {
             logger.info("Knight Tour Game starting...");
             
@@ -78,5 +86,13 @@ public class Main extends Application {
     public static void main(String[] args) {
         logger.info("Launching Knight Tour Game application");
         launch(args);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message != null ? message : "发生未知错误");
+        alert.showAndWait();
     }
 }

@@ -5,6 +5,7 @@ import com.knighttour.util.Constants;
 import com.knighttour.util.ResourceManager;
 import com.knighttour.util.Theme;
 import com.knighttour.util.ThemeManager;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,11 +23,12 @@ import java.util.function.Consumer;
  * 
  * 负责渲染8x8的棋盘网格，显示骑士位置和移动顺序。
  */
-public class BoardView extends GridPane {
+public class BoardView extends StackPane {
 
     private static final int CELL_SIZE = 60;
     private static final int BOARD_SIZE = Constants.BOARD_SIZE;
 
+    private final GridPane gridPane;
     private final Rectangle[][] cellNodes = new Rectangle[BOARD_SIZE][BOARD_SIZE];
     private final Text[][] sequenceLabels = new Text[BOARD_SIZE][BOARD_SIZE];
     private final StackPane[][] cellPanes = new StackPane[BOARD_SIZE][BOARD_SIZE];
@@ -34,12 +36,14 @@ public class BoardView extends GridPane {
     private Consumer<Position> onCellClickedHandler;
 
     public BoardView() {
+        this.gridPane = new GridPane();
+        this.getChildren().add(gridPane);
         initializeBoard();
         ThemeManager.getInstance().addThemeChangeListener(this::updateTheme);
     }
 
     private void initializeBoard() {
-        this.setAlignment(Pos.CENTER);
+        gridPane.setAlignment(Pos.CENTER);
         
         // Load knight image
         try {
@@ -48,8 +52,8 @@ public class BoardView extends GridPane {
             if (knightImage != null) {
                 knightNode.setImage(knightImage);
             }
-            knightNode.setFitWidth(CELL_SIZE * 0.8);
-            knightNode.setFitHeight(CELL_SIZE * 0.8);
+            // Bind knight size to cell size
+            // We will handle resizing in layout logic
         } catch (Exception e) {
             // Log error or ignore
         }
@@ -61,7 +65,17 @@ public class BoardView extends GridPane {
                 StackPane stackPane = new StackPane();
                 
                 // Create cell rectangle
-                Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
+                Rectangle cell = new Rectangle();
+                // Bind cell size to grid pane size
+                // We want the grid to be square and fit within the parent
+                // But individual cells in GridPane are usually sized by content or constraints.
+                // A better approach for responsive grid:
+                // Bind rectangle width/height to a property that depends on parent size.
+                
+                // Initial size
+                cell.setWidth(CELL_SIZE);
+                cell.setHeight(CELL_SIZE);
+                
                 // Set default chessboard pattern
                 Color defaultColor = (row + col) % 2 == 0 ? currentTheme.getLightCellColor() : currentTheme.getDarkCellColor();
                 cell.setFill(defaultColor);
@@ -99,8 +113,39 @@ public class BoardView extends GridPane {
                     cell.setOpacity(1.0);
                 });
 
-                this.add(stackPane, col, row);
+                gridPane.add(stackPane, col, row);
             }
+        }
+        
+        // Responsive Layout Logic
+        this.widthProperty().addListener((obs, oldVal, newVal) -> updateLayout());
+        this.heightProperty().addListener((obs, oldVal, newVal) -> updateLayout());
+    }
+
+    private void updateLayout() {
+        double w = getWidth();
+        double h = getHeight();
+        
+        if (w == 0 || h == 0) return;
+        
+        // Keep square aspect ratio
+        double size = Math.min(w, h) * 0.9; // 90% of available space
+        double cellSize = size / BOARD_SIZE;
+        
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                Rectangle cell = cellNodes[row][col];
+                cell.setWidth(cellSize);
+                cell.setHeight(cellSize);
+                
+                Text text = sequenceLabels[row][col];
+                text.setFont(Font.font(cellSize * 0.4)); // Scale font
+            }
+        }
+        
+        if (knightNode != null) {
+            knightNode.setFitWidth(cellSize * 0.8);
+            knightNode.setFitHeight(cellSize * 0.8);
         }
     }
 
