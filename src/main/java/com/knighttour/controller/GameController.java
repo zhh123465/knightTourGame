@@ -1,5 +1,6 @@
 package com.knighttour.controller;
 
+import com.knighttour.algorithm.KnightTourAlgorithm;
 import com.knighttour.algorithm.SolverState;
 import com.knighttour.model.Board;
 import com.knighttour.model.Position;
@@ -113,8 +114,9 @@ public class GameController {
     private void startSolving() {
         try {
             Position startPos = parseCurrentPosition();
+            KnightTourAlgorithm algorithm = mainWindow.getControlPanel().getSelectedAlgorithm();
             mainWindow.getControlPanel().enableControls(false); // Disable inputs
-            solverController.solve(startPos);
+            solverController.solve(startPos, algorithm);
             updateControlsState();
         } catch (Exception e) {
             mainWindow.showErrorDialog(e.getMessage());

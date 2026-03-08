@@ -1,6 +1,9 @@
 package com.knighttour.view;
 
+import com.knighttour.algorithm.DfsAlgorithm;
+import com.knighttour.algorithm.KnightTourAlgorithm;
 import com.knighttour.algorithm.SolverState;
+import com.knighttour.algorithm.WarnsdorffAlgorithm;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -17,6 +20,7 @@ import java.util.function.Consumer;
 public class ControlPanel extends VBox {
 
     private TextField positionInput;
+    private ComboBox<KnightTourAlgorithm> algorithmComboBox;
     private Button startButton;
     private Button pauseButton;
     private Button resetButton;
@@ -48,6 +52,41 @@ public class ControlPanel extends VBox {
         positionInput.setPromptText("例如: 0,0");
         positionInput.setTooltip(new Tooltip("输入起始坐标，格式：行,列 (例如 0,0)"));
         inputBox.getChildren().addAll(inputLabel, positionInput);
+
+        // 1.5 Algorithm Selection
+        VBox algoBox = new VBox(5);
+        algoBox.setAlignment(Pos.CENTER_LEFT);
+        Label algoLabel = new Label("求解算法:");
+        algorithmComboBox = new ComboBox<>();
+        algorithmComboBox.getItems().addAll(
+            new WarnsdorffAlgorithm(),
+            new DfsAlgorithm()
+        );
+        algorithmComboBox.getSelectionModel().selectFirst();
+        // Custom cell factory to display name
+        algorithmComboBox.setCellFactory(param -> new ListCell<KnightTourAlgorithm>() {
+            @Override
+            protected void updateItem(KnightTourAlgorithm item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getName());
+                }
+            }
+        });
+        algorithmComboBox.setButtonCell(new ListCell<KnightTourAlgorithm>() {
+            @Override
+            protected void updateItem(KnightTourAlgorithm item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getName());
+                }
+            }
+        });
+        algoBox.getChildren().addAll(algoLabel, algorithmComboBox);
 
         // 2. Control Buttons
         HBox buttonBox = new HBox(10);
@@ -100,7 +139,7 @@ public class ControlPanel extends VBox {
         speedBox.getChildren().addAll(speedTitle, speedSlider, speedLabel);
 
         // Add all to main VBox
-        this.getChildren().addAll(inputBox, new Separator(), buttonBox, buttonBox2, new Separator(), speedBox);
+        this.getChildren().addAll(inputBox, algoBox, new Separator(), buttonBox, buttonBox2, new Separator(), speedBox);
 
         // Bind events
         startButton.setOnAction(e -> {
@@ -148,10 +187,15 @@ public class ControlPanel extends VBox {
         positionInput.setText(text);
     }
 
+    public KnightTourAlgorithm getSelectedAlgorithm() {
+        return algorithmComboBox.getSelectionModel().getSelectedItem();
+    }
+
     public void enableControls(boolean enable) {
         startButton.setDisable(!enable);
         stepButton.setDisable(!enable);
         positionInput.setDisable(!enable);
+        algorithmComboBox.setDisable(!enable);
         // Reset and Pause are handled separately based on state
     }
 

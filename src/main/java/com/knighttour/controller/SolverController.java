@@ -1,5 +1,6 @@
 package com.knighttour.controller;
 
+import com.knighttour.algorithm.KnightTourAlgorithm;
 import com.knighttour.algorithm.KnightTourSolver;
 import com.knighttour.algorithm.SolverListener;
 import com.knighttour.algorithm.SolverState;
@@ -59,12 +60,16 @@ public class SolverController implements SolverListener {
      * 开始求解
      * 
      * @param startPos 起始位置
+     * @param algorithm 使用的算法
      */
-    public void solve(Position startPos) {
+    public void solve(Position startPos, KnightTourAlgorithm algorithm) {
         if (solver.getState() == SolverState.SOLVING || solver.getState() == SolverState.PAUSED) {
             logger.warn("Solver is already running");
             return;
         }
+        
+        // 设置算法
+        solver.setAlgorithm(algorithm);
         
         // 重置统计面板
         statisticsPanel.reset();
