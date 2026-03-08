@@ -208,6 +208,7 @@ public class ControlPanel extends VBox {
                 stepButton.setDisable(false);
                 resetButton.setDisable(false);
                 positionInput.setDisable(false);
+                algorithmComboBox.setDisable(false);
                 break;
             case SOLVING:
                 startButton.setDisable(true);
@@ -216,6 +217,7 @@ public class ControlPanel extends VBox {
                 stepButton.setDisable(true);
                 resetButton.setDisable(true);
                 positionInput.setDisable(true);
+                algorithmComboBox.setDisable(true);
                 break;
             case PAUSED:
                 startButton.setText("继续"); // Optional: reuse start for resume or use resume button
@@ -224,6 +226,7 @@ public class ControlPanel extends VBox {
                 pauseButton.setDisable(false); // Click to resume
                 stepButton.setDisable(false);
                 resetButton.setDisable(false);
+                algorithmComboBox.setDisable(true);
                 break;
             case SOLUTION_FOUND:
             case NO_SOLUTION:
@@ -232,6 +235,7 @@ public class ControlPanel extends VBox {
                 pauseButton.setDisable(true);
                 stepButton.setDisable(true);
                 resetButton.setDisable(false);
+                algorithmComboBox.setDisable(true);
                 break;
             default:
                 // Handle STOPPED or others
@@ -240,6 +244,7 @@ public class ControlPanel extends VBox {
                 pauseButton.setDisable(true);
                 stepButton.setDisable(true);
                 resetButton.setDisable(false);
+                algorithmComboBox.setDisable(true);
                 break;
         }
     }
