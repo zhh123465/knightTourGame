@@ -43,4 +43,11 @@ public interface SolverListener {
      * @param totalBacktracks 总回溯次数
      */
     void onProgress(int visitedCount, int totalBacktracks);
+    
+    /**
+     * 当求解器状态发生变化时调用
+     * 
+     * @param newState 新的状态
+     */
+    void onStateChanged(SolverState newState);
 }

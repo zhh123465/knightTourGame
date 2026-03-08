@@ -112,6 +112,7 @@ public class KnightTourSolver {
         executionStack.push(initialEntry);
         
         state = SolverState.SOLVING;
+        if (listener != null) listener.onStateChanged(state);
         
         try {
             while (!executionStack.isEmpty()) {
@@ -145,6 +146,8 @@ public class KnightTourSolver {
                 if (executionStack.size() == 64) {
                     logger.info("Solution found!");
                     state = SolverState.SOLUTION_FOUND;
+                    if (listener != null) listener.onStateChanged(state);
+                    
                     Solution solution = new Solution(
                         board.getSolutionMatrix(),
                         moveStack.getPath(),
@@ -250,6 +253,8 @@ public class KnightTourSolver {
             
             // 循环结束且未找到解
             state = SolverState.NO_SOLUTION;
+            if (listener != null) listener.onStateChanged(state);
+            
             logger.info("No solution found.");
             if (listener != null) {
                 listener.onNoSolutionFound();
@@ -258,6 +263,7 @@ public class KnightTourSolver {
             
         } catch (Exception e) {
             state = SolverState.ERROR;
+            if (listener != null) listener.onStateChanged(state);
             logger.error("Error during solving", e);
             throw new RuntimeException("Solver error", e);
         }
@@ -270,6 +276,7 @@ public class KnightTourSolver {
         synchronized (lock) {
             if (state == SolverState.SOLVING) {
                 state = SolverState.PAUSED;
+                if (listener != null) listener.onStateChanged(state);
                 logger.info("Solver paused");
             }
         }
@@ -282,6 +289,7 @@ public class KnightTourSolver {
         synchronized (lock) {
             if (state == SolverState.PAUSED) {
                 state = SolverState.SOLVING;
+                if (listener != null) listener.onStateChanged(state);
                 lock.notifyAll();
                 logger.info("Solver resumed");
             }
@@ -294,6 +302,7 @@ public class KnightTourSolver {
     public void stop() {
         synchronized (lock) {
             state = SolverState.IDLE;
+            if (listener != null) listener.onStateChanged(state);
             lock.notifyAll();
             logger.info("Solver stopped");
         }

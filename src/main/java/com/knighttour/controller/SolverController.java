@@ -37,6 +37,7 @@ public class SolverController implements SolverListener {
     // 监听器
     private java.util.function.Consumer<Solution> onSolutionFoundHandler;
     private Runnable onNoSolutionFoundHandler;
+    private java.util.function.Consumer<SolverState> onStateChangedHandler;
     
     public SolverController(Board board, BoardView boardView, StatisticsPanel statisticsPanel, KnightAnimator animator) {
         this.solver = new KnightTourSolver(board);
@@ -143,8 +144,21 @@ public class SolverController implements SolverListener {
         this.onNoSolutionFoundHandler = handler;
     }
     
+    public void setOnStateChanged(java.util.function.Consumer<SolverState> handler) {
+        this.onStateChangedHandler = handler;
+    }
+    
     // --- SolverListener 实现 ---
     
+    @Override
+    public void onStateChanged(SolverState newState) {
+        Platform.runLater(() -> {
+            if (onStateChangedHandler != null) {
+                onStateChangedHandler.accept(newState);
+            }
+        });
+    }
+
     @Override
     public void onMoveExecuted(Move move) {
         // 在 UI 线程更新

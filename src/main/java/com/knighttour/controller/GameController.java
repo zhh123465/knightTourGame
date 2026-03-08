@@ -58,6 +58,10 @@ public class GameController {
         bindViewEvents();
         
         // 绑定 SolverController 回调
+        solverController.setOnStateChanged(state -> {
+            updateControlsState();
+        });
+
         solverController.setOnSolutionFound(solution -> {
             this.lastSolution = solution;
             updateControlsState();
